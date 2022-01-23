@@ -32,8 +32,8 @@ use std::fmt::Formatter;
 
 use crate::{opcode, opcode::OPCODES};
 
-const MAXARG_BX: isize = (1 << 16) - 1; // 65535
-const MAXARG_SBX: isize = MAXARG_BX >> 1; // 32767
+const MAXARG_BX: isize = (1 << 17) - 1; // 131071
+const MAXARG_SBX: isize = MAXARG_BX >> 1; // 65535
 
 #[derive(Copy, Clone)]
 pub struct Instruction(u32);
