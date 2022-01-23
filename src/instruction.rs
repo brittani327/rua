@@ -34,6 +34,7 @@ use crate::{opcode, opcode::OPCODES};
 
 const MAXARG_BX: isize = (1 << 17) - 1; // 131071
 const MAXARG_SBX: isize = MAXARG_BX >> 1; // 65535
+const MAXARG_SJ: isize = ((1 << 25) - 1) >> 1;
 
 #[derive(Copy, Clone)]
 pub struct Instruction(u32);
@@ -95,7 +96,8 @@ impl Instruction {
     }
 
     fn sj(self) -> isize {
-        (self.0 >> 7) as isize
+        let sj = (self.0 >> 7) as isize;
+        sj - MAXARG_SJ
     }
 
     fn execute(self) {}
