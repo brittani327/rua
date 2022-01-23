@@ -22,6 +22,13 @@ use crate::{
     proto::{AbsLineInfo, Constant, LocVar, Proto, Upvalue},
 };
 
+pub async fn parse<R: AsyncRead + Send + Unpin>(reader: R) -> io::Result<Proto> {
+    let mut r = Reader::new(reader);
+    r.check_header().await?;
+    r.read_byte().await?; // sizeupvalues
+    r.read_proto().await
+}
+
 pub struct Reader<R: AsyncRead + Send + Unpin> {
     buf: BufReader<R>,
 }
