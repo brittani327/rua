@@ -12,15 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod bytecode;
-#[allow(dead_code)]
-mod closure;
-mod constants;
-#[allow(dead_code)]
-mod instruction;
-#[allow(dead_code)]
-pub mod opcode;
-#[allow(dead_code)]
-mod proto;
+use crate::proto::{Proto, Upvalue};
 
-pub use bytecode::undump;
+#[derive(Debug)]
+pub struct Closure {
+    pub(crate) proto: Proto,
+    pub(crate) upvalues: Vec<Option<Upvalue>>,
+}

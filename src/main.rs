@@ -34,7 +34,7 @@ async fn slurp(filename: String) -> anyhow::Result<Cursor<Vec<u8>>> {
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let chunk = slurp(args.script).await?;
-    let proto = rua::parse(chunk).await?;
+    let proto = rua::undump(chunk).await?;
     dbg!(proto);
     Ok(())
 }

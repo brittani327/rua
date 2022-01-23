@@ -40,7 +40,7 @@ pub enum Constant {
     String(String),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Upvalue {
     pub(crate) name: Option<String>,
     pub(crate) instack: u8,

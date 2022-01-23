@@ -17,16 +17,22 @@ use std::{io, ops::Not};
 use tokio::io::{AsyncRead, AsyncReadExt, BufReader};
 
 use crate::{
+    closure::Closure,
     constants::*,
     instruction::Instruction,
     proto::{AbsLineInfo, Constant, LocVar, Proto, Upvalue},
 };
 
-pub async fn parse<R: AsyncRead + Send + Unpin>(reader: R) -> io::Result<Proto> {
+pub async fn undump<R: AsyncRead + Send + Unpin>(reader: R) -> io::Result<Closure> {
     let mut r = Reader::new(reader);
     r.check_header().await?;
-    r.read_byte().await?; // sizeupvalues
-    r.read_proto().await
+    let sizeupvalues = r.read_byte().await?;
+    let proto = r.read_proto().await?;
+
+    assert_eq!(proto.upvalues.len(), sizeupvalues as usize);
+
+    let upvalues = vec![None; proto.upvalues.len()];
+    Ok(Closure { proto, upvalues })
 }
 
 pub struct Reader<R: AsyncRead + Send + Unpin> {
