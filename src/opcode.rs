@@ -239,6 +239,6 @@ impl OpCode {
     }
 
     pub fn name(&self) -> &str {
-        &self.name
+        self.name
     }
 }
