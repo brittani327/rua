@@ -12,19 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::io::Cursor;
+
 use clap::Parser;
-use tokio::fs::File;
+use tokio::{fs::File, io::AsyncReadExt};
 
 #[derive(Parser, Debug)]
 struct Args {
     script: String,
 }
 
+async fn slurp(filename: String) -> anyhow::Result<Cursor<Vec<u8>>> {
+    let mut script = File::open(filename).await?;
+    let mut chunk = vec![];
+    script.read_to_end(&mut chunk).await?;
+    let chunk = Cursor::new(chunk);
+    Ok(chunk)
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
-    let script = File::open(args.script).await?;
-    let proto = rua::parse(script).await?;
+    let chunk = slurp(args.script).await?;
+    let proto = rua::parse(chunk).await?;
     dbg!(proto);
     Ok(())
 }
