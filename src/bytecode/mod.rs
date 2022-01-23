@@ -16,10 +16,13 @@ use std::io;
 
 use tokio::io::AsyncRead;
 
-mod chunk;
+use crate::proto;
+
 mod reader;
 
-pub async fn parse<R: AsyncRead + Unpin>(reader: R) -> io::Result<()> {
+pub async fn parse<R: AsyncRead + Unpin>(reader: R) -> io::Result<proto::Proto> {
     let mut r = reader::Reader::new(reader);
-    r.check_header().await
+    r.check_header().await?;
+    r.read_byte().await?; // sizeupvalues
+    r.read_proto().await
 }

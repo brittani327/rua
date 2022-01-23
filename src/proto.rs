@@ -12,19 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use clap::Parser;
-use tokio::fs::File;
-
-#[derive(Parser, Debug)]
-struct Args {
-    script: String,
-}
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    let args = Args::parse();
-    let script = File::open(args.script).await?;
-    let proto = rua::parse(script).await?;
-    println!("Proto: {:?}", proto);
-    Ok(())
+#[derive(Debug)]
+pub struct Proto {
+    pub(crate) linedefined: i32,
+    pub(crate) lastlinedefined: i32,
+    pub(crate) numparams: u8,
+    pub(crate) is_vararg: u8,
+    pub(crate) maxstacksize: u8,
+    pub(crate) source: Option<String>,
+    pub(crate) code: Vec<u32>,
 }

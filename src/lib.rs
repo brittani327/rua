@@ -12,4 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod bytecode;
+mod bytecode;
+mod constants;
+mod proto;
+
+pub use bytecode::parse;
