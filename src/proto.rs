@@ -21,4 +21,40 @@ pub struct Proto {
     pub(crate) maxstacksize: u8,
     pub(crate) source: Option<String>,
     pub(crate) code: Vec<u32>,
+    pub(crate) constants: Vec<Constant>,
+    pub(crate) upvalues: Vec<Upvalue>,
+    pub(crate) protos: Vec<Proto>,
+    pub(crate) lineinfo: Vec<i8>,
+    pub(crate) abslineinfo: Vec<AbsLineInfo>,
+    pub(crate) locvars: Vec<LocVar>,
+}
+
+#[derive(Debug)]
+pub enum Constant {
+    Nil,
+    Boolean(bool),
+    Number(f64),
+    Integer(i64),
+    String(String),
+}
+
+#[derive(Debug)]
+pub struct Upvalue {
+    pub(crate) name: Option<String>,
+    pub(crate) instack: u8,
+    pub(crate) idx: u8,
+    pub(crate) kind: u8,
+}
+
+#[derive(Debug)]
+pub struct AbsLineInfo {
+    pub(crate) pc: i32,
+    pub(crate) line: i32,
+}
+
+#[derive(Debug)]
+pub struct LocVar {
+    pub(crate) varname: Option<String>,
+    pub(crate) startpc: i32,
+    pub(crate) endpc: i32,
 }

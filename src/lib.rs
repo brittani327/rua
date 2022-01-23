@@ -14,6 +14,7 @@
 
 mod bytecode;
 mod constants;
+#[allow(dead_code)]
 mod proto;
 
 pub use bytecode::parse;

@@ -20,6 +20,7 @@ license = "Apache-2.0"
 
 [dependencies]
 anyhow = "1.0.53"
+async-recursion = "1.0.0"
 bytes = "1.1.0"
 clap = { version = "3.0.10", features = ["derive"] }
 tokio = { version = "1.15.0", features = ["full"] }

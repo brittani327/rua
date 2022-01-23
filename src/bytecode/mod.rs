@@ -20,7 +20,7 @@ use crate::proto;
 
 mod reader;
 
-pub async fn parse<R: AsyncRead + Unpin>(reader: R) -> io::Result<proto::Proto> {
+pub async fn parse<R: AsyncRead + Send + Unpin>(reader: R) -> io::Result<proto::Proto> {
     let mut r = reader::Reader::new(reader);
     r.check_header().await?;
     r.read_byte().await?; // sizeupvalues
