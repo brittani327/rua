@@ -18,6 +18,7 @@ use tokio::io::{AsyncRead, AsyncReadExt, BufReader};
 
 use crate::{
     constants::*,
+    instruction::Instruction,
     proto::{AbsLineInfo, Constant, LocVar, Proto, Upvalue},
 };
 
@@ -109,11 +110,11 @@ impl<R: AsyncRead + Send + Unpin> Reader<R> {
         })
     }
 
-    async fn read_code(&mut self) -> io::Result<Vec<u32>> {
+    async fn read_code(&mut self) -> io::Result<Vec<Instruction>> {
         let n = self.read_i32_varint().await?;
         let mut v = vec![];
         for _ in 0..n {
-            v.push(self.read_u32().await?);
+            v.push(self.read_u32().await?.into());
         }
         Ok(v)
     }

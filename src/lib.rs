@@ -14,7 +14,9 @@
 
 mod bytecode;
 mod constants;
+#[allow(dead_code)]
 mod instruction;
+#[allow(dead_code)]
 pub mod opcode;
 #[allow(dead_code)]
 mod proto;

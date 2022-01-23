@@ -28,29 +28,17 @@
 //   the written unsigned value minus K, where K is half the maximum for the
 //   corresponding unsigned argument.
 
+use std::fmt::Formatter;
+
 use crate::{opcode, opcode::OPCODES};
 
 const MAXARG_BX: isize = (1 << 16) - 1; // 65535
 const MAXARG_SBX: isize = MAXARG_BX >> 1; // 32767
 
-pub trait Instruction {
-    fn opname(self) -> &'static str;
-    fn opmode(self) -> u8;
-    fn mm_mode(self) -> bool;
-    fn ot_mode(self) -> bool;
-    fn it_mode(self) -> bool;
-    fn t_mode(self) -> bool;
-    fn a_mode(self) -> bool;
-    fn opcode(self) -> u8;
-    fn abc(self) -> (isize, isize, isize, isize);
-    fn a_bx(self) -> (isize, isize);
-    fn a_sbx(self) -> (isize, isize);
-    fn ax(self) -> isize;
-    fn sj(self) -> isize;
-    fn execute(self);
-}
+#[derive(Copy, Clone)]
+pub struct Instruction(u32);
 
-impl Instruction for u32 {
+impl Instruction {
     fn opname(self) -> &'static str {
         OPCODES[self.opcode() as usize].name()
     }
@@ -80,20 +68,20 @@ impl Instruction for u32 {
     }
 
     fn opcode(self) -> u8 {
-        self as u8 & 0x7F
+        self.0 as u8 & 0x7F
     }
 
     fn abc(self) -> (isize, isize, isize, isize) {
-        let a = (self >> 7 & 0xFF) as isize;
-        let k = (self >> 15 & 0x01) as isize;
-        let b = (self >> 16 & 0xFF) as isize;
-        let c = (self >> 24) as isize;
+        let a = (self.0 >> 7 & 0xFF) as isize;
+        let k = (self.0 >> 15 & 0x01) as isize;
+        let b = (self.0 >> 16 & 0xFF) as isize;
+        let c = (self.0 >> 24) as isize;
         (a, k, b, c)
     }
 
     fn a_bx(self) -> (isize, isize) {
-        let a = (self >> 7 & 0xFF) as isize;
-        let bx = (self >> 15) as isize;
+        let a = (self.0 >> 7 & 0xFF) as isize;
+        let bx = (self.0 >> 15) as isize;
         (a, bx)
     }
 
@@ -103,34 +91,32 @@ impl Instruction for u32 {
     }
 
     fn ax(self) -> isize {
-        (self >> 7) as isize
+        (self.0 >> 7) as isize
     }
 
     fn sj(self) -> isize {
-        (self >> 7) as isize
+        (self.0 >> 7) as isize
     }
 
-    fn execute(self) {
-        match self.opmode() {
-            opcode::OP_MODE_ABC => println!("{:?} {:?}", self.opname(), self.abc()),
-            opcode::OP_MODE_ABX => println!("{:?} {:?}", self.opname(), self.a_bx()),
-            opcode::OP_MODE_ASBX => println!("{:?} {:?}", self.opname(), self.a_sbx()),
-            opcode::OP_MODE_AX => println!("{:?} {:?}", self.opname(), self.ax()),
-            opcode::OP_MODE_SJ => println!("{:?} {:?}", self.opname(), self.sj()),
+    fn execute(self) {}
+}
+
+impl std::fmt::Debug for Instruction {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let result = match self.opmode() {
+            opcode::OP_MODE_ABC => format!("{:?} {:?}", self.opname(), self.abc()),
+            opcode::OP_MODE_ABX => format!("{:?} {:?}", self.opname(), self.a_bx()),
+            opcode::OP_MODE_ASBX => format!("{:?} {:?}", self.opname(), self.a_sbx()),
+            opcode::OP_MODE_AX => format!("{:?} {:?}", self.opname(), self.ax()),
+            opcode::OP_MODE_SJ => format!("{:?} {:?}", self.opname(), self.sj()),
             _ => unreachable!(),
-        }
+        };
+        f.write_str(&result)
     }
 }
 
-#[cfg(test)]
-mod test {
-    use crate::instruction::Instruction;
-
-    #[test]
-    pub fn test() {
-        let ops: Vec<u32> = vec![81, 11, 32899, 16908356, 16842822];
-        for op in ops {
-            op.execute();
-        }
+impl From<u32> for Instruction {
+    fn from(n: u32) -> Self {
+        Self(n)
     }
 }

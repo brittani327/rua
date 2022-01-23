@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::instruction::Instruction;
+
 #[derive(Debug)]
 pub struct Proto {
     pub(crate) linedefined: i32,
@@ -20,7 +22,7 @@ pub struct Proto {
     pub(crate) is_vararg: u8,
     pub(crate) maxstacksize: u8,
     pub(crate) source: Option<String>,
-    pub(crate) code: Vec<u32>,
+    pub(crate) code: Vec<Instruction>,
     pub(crate) constants: Vec<Constant>,
     pub(crate) upvalues: Vec<Upvalue>,
     pub(crate) protos: Vec<Proto>,

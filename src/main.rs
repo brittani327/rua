@@ -25,6 +25,6 @@ async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let script = File::open(args.script).await?;
     let proto = rua::parse(script).await?;
-    println!("Proto: {:?}", proto);
+    dbg!(proto);
     Ok(())
 }
