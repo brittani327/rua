@@ -24,3 +24,4 @@ pub mod opcode;
 mod proto;
 
 pub use bytecode::undump;
+pub use closure::Closure;
